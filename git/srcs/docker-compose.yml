@@ -1,24 +1,41 @@
-version:	'1' #???
+version:	"3.7"
 services:	
-	nginx:
-		images:					debian:buster
-		restart:				always
-		container_name: nginx
-		ports:
-			- 9000:9000
-			- 443:443
-		environment:
-	wordpress:
-		images:					debian:buster
-		restart:				always
-		container_name: wordpress
-		environment:
-		ports:
-			- 3306:3306
-	mariadb:
-		images:					debian:buster
-		restart:				always
-		container_name: mariadb
-		environment:
-		ports:
-			- 3306:3306
+  nginx:
+    build: ./mariadb
+    command: command                                    # command after build container
+    # image:					debian:buster                     # base image
+    restart:				always                            # if need restart container for crash
+    # container_name: nginx                               # container name
+    ports:
+      - 9000:9000
+      - 443:443
+    # environment:
+    volumes:                                          # work directory
+      - .
+    networks:
+      - host
+  wordpress:
+    build: ./nginx
+    # image:					debian:buster                     # base image
+    restart:				always                            # if need restart container for crash
+    container_name: wordpress                           # container name
+    # environment:
+    ports:
+      - 3306:3306
+    volumes:                                          # work directory
+      - .
+    depends_on:                                         # wait start prev containers
+      - nginx
+  mariadb:
+    build: ./wordpress
+    # image:					debian:buster                     # base image
+    restart:				always                            # if need restart container for crash
+    container_name: mariadb                             # container name
+    # environment:
+    ports:
+      - 3306:3306
+    volumes:                                          # work directory
+      - .
+    depends_on:                                         # wait start prev containers
+      - nginx
+      - wordpress

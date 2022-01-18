@@ -1,0 +1,21 @@
+FROM	debian:buster
+
+RUN apt-get -y update
+RUN apt-get -y install wget
+
+# Mariadb
+RUN apt-get -y install software-properties-common dirmngr
+RUN apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+RUN add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://mirror.docker.ru/mariadb/repo/10.5/debian buster main'
+RUN apt-get -y update
+RUN apt-get -y install mariadb-server
+COPY ./srcs/test_db.sql ./.
+RUN service mariadb start && mysql < test_db.sql
+
+# END
+EXPOSE 80
+EXPOSE 443
+
+# Start
+COPY ./srcs/start.sh /.
+CMD bash ./start.sh
