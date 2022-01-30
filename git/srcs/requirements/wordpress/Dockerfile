@@ -9,8 +9,9 @@ RUN apt-get -y install php php-fpm php-mysql
 # phpMyAdmin
 RUN wget https://files.phpmyadmin.net/phpMyAdmin/5.0.4/phpMyAdmin-5.0.4-all-languages.tar.gz
 RUN tar -xzvf phpMyAdmin-5.0.4-all-languages.tar.gz
-RUN mv phpMyAdmin-5.0.4-all-languages var/www/server/phpmyadmin
-COPY ./srcs/config.inc.php var/www/server/phpmyadmin/.
+RUN mkdir /var/www && mkdir /var/www/server
+RUN mv phpMyAdmin-5.0.4-all-languages /var/www/server/phpmyadmin
+COPY ./conf/config.inc.php var/www/server/phpmyadmin/.
 
 # wordpress
 WORKDIR /var/www/server
@@ -22,12 +23,12 @@ WORKDIR /var/www/server/wordpress
 RUN mv * ../.
 WORKDIR /
 RUN rm -rf /var/www/server/wordpress
-COPY ./srcs/wp-config.php var/www/server/.
+COPY ./conf/wp-config.php var/www/server/.
 
 # END
-EXPOSE 80
-EXPOSE 443
+EXPOSE 9000
+# EXPOSE 3306
 
 # Start
-COPY ./srcs/start.sh /.
-CMD bash ./start.sh
+# COPY ./tools/start.sh /.
+# CMD bash ./start.sh
