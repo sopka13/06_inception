@@ -7,6 +7,7 @@ RUN apt-get -y install wget
 RUN apt-get -y install nginx
 RUN mkdir /var/www/server
 COPY ./conf/server.com.conf /etc/nginx/sites-available/.
+COPY ./conf/nginx.conf /etc/nginx/.
 RUN ln -s /etc/nginx/sites-available/server.com.conf  /etc/nginx/sites-enabled/
 RUN chmod -R u=rw,g=r,o=r,a+X /var/www/server
 RUN chown -R www-data:www-data /var/www/server
@@ -22,6 +23,7 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048\
 EXPOSE 443
 
 # Start
-# COPY ./tools/start.sh /.
+COPY ./tools/start.sh /.
 # CMD bash ./start.sh
-CMD ["nginx", "-g", "daemon off;"]
+# CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT sh ./start.sh

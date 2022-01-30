@@ -6,8 +6,8 @@ services:
     build: ./requirements/mariadb                         # dockerfile for build
     image: mariadb                                        # base image
     restart: unless-stopped                               # if need restart container for crash
-    environment:                                        # cpec vars
-      - MYSQL_DATABASE=wordpress
+    # environment:                                        # cpec vars
+    #   - MYSQL_DATABASE=wordpress
     env_file:                                           # variables file
       - .env
     # command: service mariadb start

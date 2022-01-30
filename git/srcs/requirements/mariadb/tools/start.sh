@@ -10,4 +10,4 @@ mysql -e "FLUSH PRIVILEGES"
 
 service mysql stop
 
-exec mysqld -u root --datadir="/var/lib/mysql"
+exec /usr/sbin/mysqld -u root
