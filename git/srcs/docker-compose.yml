@@ -16,7 +16,7 @@ services:
     ports:                                                # local port in this host / open ports in container
       - 3306
     volumes:                                              # work directory
-      - ./mariadb/data:${MARIADB_DIR}
+      - ./requirements/mariadb/data:${MARIADB_DIR}
     # depends_on:                                           # wait start prev containers
     #   - nginx
 
@@ -38,7 +38,7 @@ services:
     networks:
       - inception
     volumes:                                              # work directory
-      - ./wordpress/data:${WORDPRESS_DIR}
+      - ./requirements/wordpress/data:${WORDPRESS_DIR}
     depends_on:                                           # wait start prev containers
       - mariadb
 
@@ -57,7 +57,7 @@ services:
     networks:
       - inception
     volumes:                                              # work directory
-      - ./wordpress/data:${WORDPRESS_DIR}
+      - ./requirements/wordpress/data:${WORDPRESS_DIR}
     depends_on:                                           # wait start prev containers
       - wordpress
 
