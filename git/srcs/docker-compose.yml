@@ -1,65 +1,52 @@
 version: "3.7"
 services:
 
-  mariadb:                                                # service name
-    container_name: mariadb                               # container name
-    build: ./requirements/mariadb                         # dockerfile for build
-    image: mariadb                                        # base image
+  nginx:                                                  # service name
+    container_name: nginx                                 # container name
+    build: ./requirements/nginx                           # dockerfile for build
+    image: nginx                                          # base image
     restart: unless-stopped                               # if need restart container for crash
-    # environment:                                        # cpec vars
-    #   - MYSQL_DATABASE=wordpress
     env_file:                                           # variables file
       - .env
-    # command: service mariadb start
+    ports:                                                # local port in this host / open ports in container
+      - 127.0.0.1:443:443
     networks:
       - inception
-    ports:                                                # local port in this host / open ports in container
-      - 3306
     volumes:                                              # work directory
-      - ./requirements/mariadb/data:${MARIADB_DIR}
-    # depends_on:                                           # wait start prev containers
-    #   - nginx
+      - wp:/var/www/wordpress
+    depends_on:                                           # wait start prev containers
+      - wordpress
 
   wordpress:                                              # service name
     container_name: wordpress                             # container name
     build: ./requirements/wordpress                       # dockerfile for build
     image: wordpress                                      # base image
     restart: unless-stopped                               # if need restart container for crash
-    # environment:                                        # cpec vars
-    #   - WORDPRESS_DB_HOST=db:3306
-    #   - WORDPRESS_DB_USER=$MYSQL_USER
-    #   - WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD
-    #   - WORDPRESS_DB_NAME=wordpress
-    # command: service php7.3-fpm start
     env_file:                                           # variables file
       - .env
-    ports:                                                # local port in this host / open ports in container
-      - 9000
     networks:
       - inception
     volumes:                                              # work directory
-      - ./requirements/wordpress/data:${WORDPRESS_DIR}
+      - wp:/var/www/wordpress
     depends_on:                                           # wait start prev containers
       - mariadb
+    ports:                                                # local port in this host / open ports in container
+      - 9000
 
-  nginx:                                                  # service name
-    container_name: nginx                                 # container name
-    build: ./requirements/nginx                           # dockerfile for build
-    image: nginx                                          # base image
+  mariadb:                                                # service name
+    container_name: mariadb                               # container name
+    build: ./requirements/mariadb                         # dockerfile for build
+    image: mariadb                                        # base image
+    volumes:                                              # work directory
+      - db:/var/lib/mysql
     restart: unless-stopped                               # if need restart container for crash
-    # environment:                                        # cpec vars
-    #   - name=value
     env_file:                                           # variables file
       - .env
-    # command: service nginx start                                      # command after build container
-    ports:                                                # local port in this host / open ports in container
-      - 127.0.0.1:443:443
     networks:
       - inception
-    volumes:                                              # work directory
-      - ./requirements/wordpress/data:${WORDPRESS_DIR}
-    depends_on:                                           # wait start prev containers
-      - wordpress
+    ports:                                                # local port in this host / open ports in container
+      - 3306
+
 
 networks:
   inception:

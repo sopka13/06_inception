@@ -1,13 +1,13 @@
 #!/bin/sh
 
-service mariadb start
+service mysql start
 
-mariadb -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`"
-mariadb -e "CREATE USER IF NOT EXISTS \`${WP_USER}\`@'%' IDENTIFIED BY '${WP_USER_PASSWORD}'"
-mariadb -e "GRANT ALL PRIVILEGES ON *.* TO \`${WP_ADMIN}\`@'%' IDENTIFIED BY '${WP_ADMIN_PASSWORD}'"
-mariadb -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO \`${WP_USER}\`@'%'"
-mariadb -e "FLUSH PRIVILEGES"
+mysql -e "CREATE DATABASE IF NOT EXISTS \`${WP_DB_NAME}\`"
+mysql -e "CREATE USER IF NOT EXISTS \`${WP_USER}\`@'%' IDENTIFIED BY '${WP_USER_PASSWORD}'"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO \`${WP_ADMIN}\`@'%' IDENTIFIED BY '${WP_ADMIN_PASSWORD}'"
+mysql -e "GRANT ALL PRIVILEGES ON \`${WP_DB_NAME}\`.* TO \`${WP_USER}\`@'%'"
+mysql -e "FLUSH PRIVILEGES"
 
-service mariadb stop
+service mysql stop
 
-exec /usr/sbin/mariadb -u root
+exec /usr/sbin/mysqld -u root

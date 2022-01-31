@@ -11,6 +11,7 @@ RUN apt-get -y update
 RUN apt-get -y install mariadb-server
 COPY ./conf/my.cnf /etc/mysql/my.cnf
 RUN chmod +rw /etc/mysql/my.cnf
+RUN apt-get -y upgrade
 # COPY ./data/test_db.sql ./.
 # RUN service mariadb start && mysql < test_db.sql
 
