@@ -7,18 +7,17 @@ RUN apt-get -y install wget
 RUN apt-get -y install php php-fpm php-mysql
 
 # phpMyAdmin
-RUN wget https://files.phpmyadmin.net/phpMyAdmin/5.0.4/phpMyAdmin-5.0.4-all-languages.tar.gz
-RUN tar -xzvf phpMyAdmin-5.0.4-all-languages.tar.gz
+# RUN wget https://files.phpmyadmin.net/phpMyAdmin/5.0.4/phpMyAdmin-5.0.4-all-languages.tar.gz
+# RUN tar -xzvf phpMyAdmin-5.0.4-all-languages.tar.gz
 RUN mkdir /var/www
-RUN mv phpMyAdmin-5.0.4-all-languages /var/www/phpmyadmin
-COPY ./conf/config.inc.php var/www/phpmyadmin/.
+# RUN mv phpMyAdmin-5.0.4-all-languages /var/www/phpmyadmin
+# COPY ./conf/config.inc.php var/www/phpmyadmin/.
 
 # wordpress
 WORKDIR /var/www
 RUN wget https://wordpress.org/latest.tar.gz
 RUN tar -xzvf latest.tar.gz
 RUN rm latest.tar.gz
-RUN chown -R www-data:www-data /var/www/wordpress
 # WORKDIR /var/www/wordpress
 # RUN mv * ../.
 # WORKDIR /
@@ -26,14 +25,20 @@ RUN chown -R www-data:www-data /var/www/wordpress
 # COPY ./conf/wp-config.php var/www/server/.
 RUN rm -rf /var/www/wordpress/wp-config-sample.php
 COPY ./conf/wp-config.php /var/www/wordpress/.
-COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d/www.conf
+RUN chown -R www-data:www-data /var/www/wordpress
+COPY ./conf/www.conf /etc/php/7.3/fpm/pool.d
+# COPY ./conf/php-fpm.conf /etc/php/7.3/fpm/
+WORKDIR /
+RUN mkdir /run/php
+# RUN touch /run/php/php7.3-fpm.pid
 
 # END
 EXPOSE 9000
 # EXPOSE 3306
 
 # Start
-RUN cd /
-COPY ./tools/start.sh .
-RUN chmod 755 start.sh
-ENTRYPOINT sh ./start.sh
+CMD ./usr/sbin/php-fpm7.3 -F
+# WORKDIR /
+# COPY ./tools/start.sh .
+# # RUN chmod 755 start.sh
+# ENTRYPOINT sh ./start.sh

@@ -30,8 +30,8 @@ services:
       - wp:/var/www/wordpress
     depends_on:                                           # wait start prev containers
       - mariadb
-    ports:                                                # local port in this host / open ports in container
-      - 9000
+    # ports:                                                # local port in this host / open ports in container
+    #   - 9000
 
   mariadb:                                                # service name
     container_name: mariadb                               # container name
@@ -44,11 +44,26 @@ services:
       - .env
     networks:
       - inception
-    ports:                                                # local port in this host / open ports in container
-      - 3306
+    # ports:                                                # local port in this host / open ports in container
+    #   - 3306
 
 
 networks:
   inception:
     driver: bridge
     name: inception
+
+volumes:
+    db:
+      driver: local
+      driver_opts:
+        type: none
+        device: ${PWD}/db-data
+        o: bind
+
+    wp:
+      driver: local
+      driver_opts:
+        type: none
+        device: ${PWD}/wp-data
+        o: bind

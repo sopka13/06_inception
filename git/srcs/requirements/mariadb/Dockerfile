@@ -9,8 +9,10 @@ RUN apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.as
 RUN add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://mirror.docker.ru/mariadb/repo/10.5/debian buster main'
 RUN apt-get -y update
 RUN apt-get -y install mariadb-server
-COPY ./conf/my.cnf /etc/mysql/my.cnf
-RUN chmod +rw /etc/mysql/my.cnf
+# COPY ./conf/my.cnf /etc/mysql/my.cnf
+RUN rm /etc/mysql/mariadb.conf.d/50-server.cnf 
+COPY conf/50-server.cnf /etc/mysql/mariadb.conf.d 
+RUN chmod +rw /etc/mysql/mariadb.conf.d/50-server.cnf
 RUN apt-get -y upgrade
 # COPY ./data/test_db.sql ./.
 # RUN service mariadb start && mysql < test_db.sql
