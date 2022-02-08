@@ -1,13 +1,28 @@
 #!/bin/sh
 
+
+if [ ! -d /var/lib/mysql/$DB_NAME ]
+then
+
 service mysql start
 
-mysql -e "CREATE DATABASE IF NOT EXISTS '${WP_DB_NAME}'"
-mysql -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_PASSWORD}' WITH GRANT OPTION"
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}'"
-mysql -e "GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}' WITH GRANT OPTION"
-mysql -e "FLUSH PRIVILEGES"
+# mysql --user=root <<EOF
 
-service mysql stop
+mysql -e "CREATE DATABASE IF NOT EXISTS ${DB_NAME};" && echo "OK" || echo "FAIL"
+mysql -e "CREATE USER $DB_USER@'%' IDENTIFIED BY '$DB_PASSWORD';" && echo "OK" || echo "FAIL"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO $DB_USER@'%';" && echo "OK" || echo "FAIL"
+mysql -u root test < /test.sql && echo "OK" || echo "FAIL"
+# mysql -e "CREATE USER $DB_USER@'localhost' IDENTIFIED BY '$DB_PASSWORD';" && echo "OK" || echo "FAIL"
+# mysql -e "GRANT ALL PRIVILEGES ON *.* TO $DB_USER@'localhost';" && echo "OK" || echo "FAIL"
+mysql -e "FLUSH PRIVILEGES;" && echo "OK" || echo "FAIL"
+mysql -e "ALTER USER root@localhost IDENTIFIED BY '${DB_ROOT_PASSWORD}';" && echo "OK" || echo "FAIL"
+# EOF
+# cp -r /var/tmp/test /var/lib/mysql && echo "OK" || echo "FAIL"
+# service mysql stop
+else
 
-./usr/bin/mysqld_safe
+mysqld
+
+fi
+
+(echo -n $(hostname -i) ; echo ":3306") > var/ip/mysql_ip

@@ -28,6 +28,7 @@ services:
       - inception
     volumes:                                              # work directory
       - wp:/var/www/wordpress
+      - ip:/var/ip
     depends_on:                                           # wait start prev containers
       - mariadb
     # ports:                                                # local port in this host / open ports in container
@@ -37,8 +38,14 @@ services:
     container_name: mariadb                               # container name
     build: ./requirements/mariadb                         # dockerfile for build
     image: mariadb                                        # base image
+    # environment:
+    #   - DB_NAME
+    #   - DB_USER
+    #   - DB_PASSWORD
+    #   - DB_ROOT_PASSWORD
     volumes:                                              # work directory
       - db:/var/lib/mysql
+      - ip:/var/ip
     restart: unless-stopped                               # if need restart container for crash
     env_file:                                           # variables file
       - .env
@@ -66,4 +73,11 @@ volumes:
       driver_opts:
         type: none
         device: ${PWD}/wp-data
+        o: bind
+
+    ip:
+      driver: local
+      driver_opts:
+        type: none
+        device: ${PWD}/ip
         o: bind
